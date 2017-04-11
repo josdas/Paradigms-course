@@ -181,9 +181,9 @@ uint get_next_digit(big_integer const& first, big_integer const& second)
 		uint dig = 0;
 		if (absFirst >= absSecond)
 		{
-			for (int i = 31; i >= 0; i--)
+			for (int j = 31; j >= 0; j--)
 			{
-				uint nw = dig + (1ll << i);
+				uint nw = dig + (1ll << j);
 				if (nw * absSecond <= absFirst)
 				{
 					dig = nw;
@@ -212,6 +212,15 @@ big_integer operator/(big_integer const& first, big_integer const& second)
 	if (absFirst < absSecond)
 	{
 		return big_integer(0);
+	}
+	if (absSecond.length() == 1)
+	{
+		big_integer result = absFirst / absSecond.get_digit(0);
+		if (sign)
+		{
+			result = -result;
+		}
+		return result;
 	}
 	uint t = static_cast<uint>(absFirst.length() - absSecond.length());
 	absSecond = absSecond << t * pow_dig;
@@ -254,8 +263,8 @@ big_integer operator+(big_integer const& first, big_integer const& second)
 	for (size_t i = 0; i < size; i++)
 	{
 		ull val = carr + first.get_inf_digit(i) + second.get_inf_digit(i);
-		carr = val / dig;
-		temp[i] = val % dig;
+		carr = val >> pow_dig;
+		temp[i] = val & (dig - 1);
 	}
 	bool sgn;
 	if (temp[size - 1] >> (pow_dig - 1))
@@ -372,7 +381,8 @@ string to_string(big_integer const& arg)
 	return result;
 }
 
-big_integer operator/(big_integer const& first, int second)
+template <typename E>
+big_integer div_big_small(big_integer const& first, E second)
 {
 	if (second == 0)
 	{
@@ -380,7 +390,7 @@ big_integer operator/(big_integer const& first, int second)
 	}
 	big_integer absFirst(first.absolute_value());
 	bool isNeg = first.is_negative() ^ is_neg(second);
-	ll div = abs(static_cast<ll>(second));
+	ull div = abs(static_cast<ll>(second));
 	size_t size = first.length();
 	vector<uint> temp(size);
 	ull carry = 0;
@@ -398,31 +408,15 @@ big_integer operator/(big_integer const& first, int second)
 	return T;
 }
 
-/*
+big_integer operator/(big_integer const& first, int second)
+{
+	return div_big_small<int>(first, second);
+}
+
 big_integer operator/(big_integer const& first, uint second)
 {
-	if (second == 0)
-	{
-		throw exception("divition_by_zero");
-	}
-	big_integer absFirst(first.absolute_value());
-	bool is_negative = first.is_negative();
-	size_t size = first.length();
-	vector<uint> temp(size);
-	ull carry = 0;
-	for (int i = static_cast<int>(size) - 1; i >= 0; i--)
-	{
-		ull cur = absFirst.get_digit(i) + carry * dig;
-		temp[i] = static_cast<uint>(cur / second);
-		carry = cur % second;
-	}
-	big_integer T(temp, false);
-	if (is_negative)
-	{
-		T = -T;
-	}
-	return T;
-}*/
+	return div_big_small<uint>(first, second);
+}
 
 int operator%(big_integer const& first, int second)
 {
@@ -475,37 +469,52 @@ big_integer operator~(big_integer const& first)
 	return big_integer(temp, !first.is_negative());
 }
 
-big_integer operator&(big_integer const& first, big_integer const& second)
+enum type_bit_operation
+{
+	xor,
+	or,
+	and
+};
+
+template<typename T>
+T do_bit_operation(T a, T b, type_bit_operation type)
+{
+	switch (type)
+	{
+	case xor:
+		return a ^ b;
+	case or:
+		return a | b;
+	case and:
+		return a & b;
+	}
+	return 0;
+}
+
+big_integer bit_operation(big_integer const& first, big_integer const& second, type_bit_operation type)
 {
 	size_t size = max(first.length(), second.length());
 	vector<uint> temp(size);
 	for (size_t i = 0; i < size; i++)
 	{
-		temp[i] = first.get_inf_digit(i) & second.get_inf_digit(i);
+		temp[i] = do_bit_operation(first.get_inf_digit(i), second.get_inf_digit(i), type);
 	}
-	return big_integer(temp, first.is_negative() & second.is_negative());
+	return big_integer(temp, do_bit_operation(first.is_negative(), second.is_negative(), type));
+}
+
+big_integer operator&(big_integer const& first, big_integer const& second)
+{
+	return bit_operation(first, second, and);
 }
 
 big_integer operator|(big_integer const& first, big_integer const& second)
 {
-	size_t size = max(first.length(), second.length());
-	vector<uint> temp(size);
-	for (size_t i = 0; i < size; i++)
-	{
-		temp[i] = first.get_inf_digit(i) | second.get_inf_digit(i);
-	}
-	return big_integer(temp, first.is_negative() | second.is_negative());
+	return bit_operation(first, second, or);
 }
 
 big_integer operator^(big_integer const& first, big_integer const& second)
 {
-	size_t size = max(first.length(), second.length());
-	vector<uint> temp(size);
-	for (size_t i = 0; i < size; i++)
-	{
-		temp[i] = first.get_inf_digit(i) ^ second.get_inf_digit(i);
-	}
-	return big_integer(temp, first.is_negative() ^ second.is_negative());
+	return bit_operation(first, second, xor);
 }
 
 big_integer operator>>(big_integer const& first, uint shift)
@@ -617,7 +626,7 @@ big_integer big_integer::absolute_value() const
 	{
 		return -*this;
 	}
-	return +*this;
+	return *this;
 }
 
 void big_integer::normalize()

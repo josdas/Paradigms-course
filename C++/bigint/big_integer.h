@@ -37,7 +37,7 @@ struct big_integer
 
 
 	friend big_integer operator/(big_integer const&, int);
-	//friend big_integer operator/(big_integer const&, uint);
+	friend big_integer operator/(big_integer const&, uint);
 	friend int operator%(big_integer const&, int);            
 
 
