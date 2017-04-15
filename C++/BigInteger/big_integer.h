@@ -11,19 +11,17 @@ typedef unsigned int uint;
 typedef unsigned long long ull;
 typedef long long ll;
 
-
-const ll pow_dig = 32;
-const ll dig = 1ll << pow_dig;
+const ll pow_digit = 32;
+const ll max_digit = 1ll << pow_digit;
 const ull base_10 = 10;
 
-struct big_integer
-{
-    big_integer();
-    big_integer(big_integer const& other);
-    big_integer(int a);
+struct big_integer {
+	big_integer();
+	big_integer(big_integer const& other);
+	big_integer(int a);
 	big_integer(uint a);
 	explicit big_integer(vector<uint> const& T, bool _sign);
-    explicit big_integer(string const& str);
+	explicit big_integer(string const& str);
 
 
 	big_integer& operator=(big_integer const& other);
@@ -31,25 +29,25 @@ struct big_integer
 
 	friend big_integer operator-(big_integer const&, big_integer const&);
 	friend big_integer operator+(big_integer const&, big_integer const&);
-	friend big_integer operator*(big_integer const&, big_integer const&); 
-	friend big_integer operator/(big_integer const&, big_integer const&); 
-	friend big_integer operator%(big_integer const&, big_integer const&); 
+	friend big_integer operator*(big_integer const&, big_integer const&);
+	friend big_integer operator/(big_integer const&, big_integer const&);
+	friend big_integer operator%(big_integer const&, big_integer const&);
 
 
 	friend big_integer operator/(big_integer const&, int);
 	friend big_integer operator/(big_integer const&, uint);
-	friend int operator%(big_integer const&, int);            
+	friend int operator%(big_integer const&, int);
 
 
-	friend big_integer operator&(big_integer const&, big_integer const&); 
-	friend big_integer operator|(big_integer const&, big_integer const&); 
+	friend big_integer operator&(big_integer const&, big_integer const&);
+	friend big_integer operator|(big_integer const&, big_integer const&);
 	friend big_integer operator^(big_integer const&, big_integer const&);
 
 
-	friend big_integer operator-(big_integer const&);               
+	friend big_integer operator-(big_integer const&);
 	friend big_integer operator+(big_integer const&);
 	friend big_integer operator~(big_integer const&);
-	friend big_integer operator++(big_integer&);   
+	friend big_integer operator++(big_integer&);
 
 
 	friend big_integer operator<<(big_integer const&, uint);
@@ -58,10 +56,7 @@ struct big_integer
 	big_integer& operator<<=(int rhs);
 	big_integer& operator>>=(int rhs);
 
-
-	friend std::string to_string(big_integer const&);
-	friend std::string to_bin_string(big_integer const&);
-	friend std::string to_string(big_integer const& a);
+	friend string to_string(big_integer const& a);
 
 
 	friend bool operator==(big_integer const& a, big_integer const& b);
@@ -96,9 +91,10 @@ struct big_integer
 	big_integer absolute_value() const;
 private:
 	bool sign;
-	std::vector<uint> data;
+	vector<uint> data;
 	void normalize();
 };
+
 string to_bin_string(big_integer const& arg);
 string to_string(big_integer const& arg);
 
