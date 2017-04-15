@@ -1,9 +1,7 @@
 #include "big_integer.h"
 
-#include <cstring>
 #include <stdexcept>
 #include <algorithm>
-#include <cassert>
 
 template <typename T>
 bool is_neg(T x) {
@@ -85,9 +83,7 @@ big_integer::big_integer(string const& str) {
 	}
 	sign = false;
 	data = tempData;
-	if (isNeg) {
-		*this = -*this;
-	}
+	set_sign(isNeg);
 	normalize();
 }
 
@@ -104,22 +100,22 @@ big_integer operator*(big_integer const& first, big_integer const& second) {
 	if (absFirst.length() > absSecond.length()) {
 		absFirst.swap(absSecond);
 	}
-	size_t size = absFirst.length() + absSecond.length();
-	big_integer result;
+	vector<uint> temp(absFirst.length() + absSecond.length() + 1);
 	for (size_t i = 0; i < absFirst.length(); i++) {
-		vector<uint> temp1(size);
-		vector<uint> temp2(size + 1);
+		ull carry = 0;
 		for (size_t j = 0; j < absSecond.length(); j++) {
 			size_t k = i + j;
 			ull tmp = static_cast<ull>(absFirst.get_digit(i)) * absSecond.get_digit(j);
-			temp1[k] = tmp & (max_digit - 1);
-			temp2[k + 1] = tmp >> pow_digit;
+			ull e = temp[k] + (tmp & (max_digit - 1)) + carry;
+			temp[k] = e & max_digit - 1;
+			carry = (tmp >> pow_digit) + (e >> pow_digit);
 		}
-		result = result + big_integer(temp1, false) + big_integer(temp2, false);
+		if (carry != 0) {
+			temp[i + absSecond.length()] += static_cast<uint>(carry);
+		}
 	}
-	if (sign) {
-		result = -result;
-	}
+	big_integer result(temp, false);
+	result.set_sign(sign);
 	return result;
 }
 
@@ -132,6 +128,8 @@ big_integer get_higher_digits(big_integer const& number, size_t n) {
 	}
 	return big_integer(temp, false);
 }
+
+double timed;
 
 uint get_next_digit(big_integer const& first, big_integer const& second) {
 	if (second == 0) {
@@ -207,9 +205,7 @@ big_integer operator/(big_integer const& first, big_integer const& second) {
 	}
 	reverse(temp.begin(), temp.end());
 	big_integer result(temp, false);
-	if (sign) {
-		result = -result;
-	}
+	result.set_sign(sign);
 	return result;
 }
 
@@ -226,7 +222,7 @@ big_integer operator+(big_integer const& first, big_integer const& second) {
 		carr = val >> pow_digit;
 		temp[i] = val & (max_digit - 1);
 	}
-	bool sgn = temp[size - 1] >> (pow_digit - 1);
+	bool sgn = (temp[size - 1] >> (pow_digit - 1)) > 0;
 	return big_integer(temp, sgn);
 }
 
@@ -309,9 +305,7 @@ big_integer div_big_small(big_integer const& first, E second) {
 		carry = cur % div;
 	}
 	big_integer T(temp, false);
-	if (isNeg) {
-		T = -T;
-	}
+	T.set_sign(isNeg);
 	return T;
 }
 
@@ -328,7 +322,6 @@ int operator%(big_integer const& first, int second) {
 		throw exception("mod_by_zero");
 	}
 	big_integer absFirst(first.absolute_value());
-	bool isNeg = first.is_negative();
 	size_t size = first.length();
 	int carry = 0;
 	for (int i = static_cast<int>(size) - 1; i >= 0; i--) {
@@ -488,6 +481,12 @@ uint big_integer::get_inf_digit(size_t i) const {
 
 big_integer big_integer::absolute_value() const {
 	return is_negative() ? -*this : *this;
+}
+
+void big_integer::set_sign(bool s) {
+	if (s != is_negative()) {
+		*this = -*this;
+	}
 }
 
 void big_integer::normalize() {

@@ -89,6 +89,7 @@ struct big_integer {
 	uint get_digit(size_t i) const;
 	uint get_inf_digit(size_t i) const;
 	big_integer absolute_value() const;
+	void set_sign(bool s);
 private:
 	bool sign;
 	vector<uint> data;
