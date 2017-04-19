@@ -1,7 +1,7 @@
 package ru.ifmo.ctddev.naumov.test;
 
 import ru.ifmo.ctddev.naumov.parse.*;
-import ru.ifmo.ctddev.naumov.parse.levelAndParse.ExpressionParser;
+import ru.ifmo.ctddev.naumov.parse.parse.ExpressionParser;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -96,7 +96,4 @@ private:
 	void normalize();
 };
 
-string to_bin_string(big_integer const& arg);
-string to_string(big_integer const& arg);
-
 #endif // BIG_INTEGER_H

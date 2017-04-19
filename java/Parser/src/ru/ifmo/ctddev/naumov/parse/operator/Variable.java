@@ -6,14 +6,14 @@ import ru.ifmo.ctddev.naumov.parse.TripleExpression;
 /**
  * Created by Stas on 28.03.2017.
  */
-public class Variable implements TripleExpression {
+public class Variable<T> implements TripleExpression<T> {
     String name;
 
     public Variable(String s) {
         name = s;
     }
 
-    public int evaluate(int x, int y, int z) {
+    public T evaluate(T x, T y, T z) {
         switch (name) {
             case "x":
                 return x;

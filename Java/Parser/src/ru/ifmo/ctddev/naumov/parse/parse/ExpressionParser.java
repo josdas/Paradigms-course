@@ -1,4 +1,4 @@
-package ru.ifmo.ctddev.naumov.parse.levelAndParse;
+package ru.ifmo.ctddev.naumov.parse.parse;
 
 import ru.ifmo.ctddev.naumov.exception.IllegalOperationException;
 import ru.ifmo.ctddev.naumov.exception.OverflowException;
@@ -13,45 +13,79 @@ import ru.ifmo.ctddev.naumov.parse.token.UnaryToken;
 /**
  * Created by Stas on 28.03.2017.
  */
-public class ExpressionParser implements Parser {
+public class ExpressionParser<T> implements Parser<T> {
+    public static final BaseToken VARIABLE_Z = new BaseToken("variable", "z");
+    public static final BaseToken VARIABLE_Y = new BaseToken("variable", "y");
+    public static final BaseToken VARIABLE_X = new BaseToken("variable", "x");
+    public static final BaseToken LEFT_BRACE = new BaseToken("leftBrace", "(");
+    public static final BaseToken RIGHT_BRACE = new BaseToken("rightBrace", ")");
+    public static final BaseToken END = new BaseToken("end");
+    public static final BaseToken START = new BaseToken("start");
+    public static final BaseToken NUMBER = new BaseToken("number");
+
+    public final BinToken<T> MUL = new BinToken<T>("mul", "*", CheckedMultiply::new);
+    public final BinToken<T> DIV = new BinToken<T>("div", "/", CheckedDivide::new);
+    public final BinToken<T> ADD = new BinToken<T>("add", "+", CheckedAdd::new);
+    public final BinToken<T> SUB = new BinToken<T>("sub", "-", CheckedSubtract::new);
+    public final BinToken<T> MAX = new BinToken<T>("max", "max", CheckedMax::new);
+    public final BinToken<T> MIN = new BinToken<T>("min", "min", CheckedMin::new);
+
+    public final UnaryToken<T> NEGATIVE = new UnaryToken<T>("not", "-", CheckedNegate::new);
+    public final UnaryToken<T> SQRT = new UnaryToken<T>("sqrt", "sqrt", CheckedSqrt::new);
+    public final UnaryToken<T> ABS = new UnaryToken<T>("abs", "abs", CheckedAbs::new);
+
     private final BaseToken systemTokens[] = {
-            new BaseToken("number"),
-            new BaseToken("start"),
-            new BaseToken("end"),
-            new BaseToken("leftBrace", "("),
-            new BaseToken("rightBrace", ")"),
-            new BaseToken("variable", "x"),
-            new BaseToken("variable", "y"),
-            new BaseToken("variable", "z"),
+            VARIABLE_X,
+            VARIABLE_Y,
+            VARIABLE_Z,
+            LEFT_BRACE,
+            RIGHT_BRACE,
+            END,
+            START,
+            NUMBER
     };
 
     private final BinToken binTokens[] = {
-            new BinToken("mul", "*", CheckedMultiply::new),
-            new BinToken("div", "/", CheckedDivide::new),
-            new BinToken("add", "+", CheckedAdd::new),
-            new BinToken("sub", "-", CheckedSubtract::new),
-            new BinToken("max", "max", CheckedMax::new),
-            new BinToken("min", "min", CheckedMin::new),
+            MUL,
+            DIV,
+            ADD,
+            SUB,
+            MAX,
+            MIN,
     };
 
     private final UnaryToken unaryTokens[] = {
-            new UnaryToken("not", "-", CheckedNegate::new),
-            new UnaryToken("sqrt", "sqrt", CheckedSqrt::new),
-            new UnaryToken("abs", "abs", CheckedAbs::new),
+            NEGATIVE,
+            SQRT,
+            ABS,
     };
 
-    private final AbstractLevel mainLevel =
-            new LevelBin(new String[]{"min", "max"},
-            new LevelBin(new String[]{"sub", "add"},
-            new LevelBin(new String[]{"mul", "div"},
-            new LevelUno(new String[]{"not", "sqrt", "abs"},
-            new LevelParse()))));
+    private final AbstractLevel<T> mainLevel =
+            new LevelBin<T>(
+                    new LevelBin<T>(
+                            new LevelBin<T>(
+                                    new LevelUno<T>(
+                                            new LevelParse<T>(),
+                                            NEGATIVE, SQRT, ABS),
+                                    MUL, DIV
+                                    ),
+                            SUB, ADD
+                            ),
+                    MIN, MAX
+                    );
+
+    /*private final AbstractLevel<T> mainLevel =
+            new LevelBin<T>(new BinToken[]{MIN, MAX},
+            new LevelBin<T>(new BinToken[]{SUB, ADD},
+            new LevelBin<T>(new BinToken[]{MUL, DIV},
+            new LevelUno<T>(new UnaryToken[]{NEGATIVE, SQRT, ABS},
+            new LevelParse<T>()))));*/
 
     private String expression;
     private int value;
     private int cur;
-    private BaseToken curToken;
     private int beginOfLastOperator;
+    private BaseToken curToken;
 
     BaseToken getCurToken() {
         return curToken;
@@ -65,9 +99,9 @@ public class ExpressionParser implements Parser {
     }
 
     private boolean isUnary(BaseToken token) {
-        return !token.equalsName("number")
+        return !token.equals(NUMBER)
                 && !token.equalsName("variable")
-                && !token.equalsName("rightBrace");
+                && !token.equals(RIGHT_BRACE);
     }
 
     private boolean isBinary(BaseToken token) {
@@ -116,7 +150,7 @@ public class ExpressionParser implements Parser {
             cur++;
         }
         if (cur >= expression.length()) {
-            curToken = findSystemToken("end");
+            curToken = END;
             return;
         }
         char chr = expression.charAt(cur);
@@ -125,7 +159,7 @@ public class ExpressionParser implements Parser {
                 && cur + 1 < expression.length()
                 && Character.isDigit(expression.charAt(cur + 1))
                 && isUnary(curToken)) {
-            curToken = findSystemToken("number");
+            curToken = NUMBER;
             int left = cur;
             do {
                 cur++;
@@ -138,7 +172,7 @@ public class ExpressionParser implements Parser {
             return;
         }
         if (chr == '-' && isUnary(curToken)) {
-            curToken = findUnaryToken("not");
+            curToken = NEGATIVE;
             cur += 1;
             return;
         }
@@ -177,7 +211,7 @@ public class ExpressionParser implements Parser {
 
     }
 
-    TripleExpression parse() throws ParsingException {
+    TripleExpression<T> parse() throws ParsingException {
         return mainLevel.calc(this);
     }
 
@@ -211,14 +245,14 @@ public class ExpressionParser implements Parser {
         return getSubstringWithError(beginOfLastOperator);
     }
 
-    public TripleExpression parse(String expression) throws ParsingException {
+    public TripleExpression<T> parse(String expression) throws ParsingException {
         cur = 0;
         value = 0;
-        curToken = findSystemToken("start");
+        curToken = START;
         this.expression = expression;
-        TripleExpression temp = parse();
-        if (!getCurToken().equalsName("end")) {
-            if (getCurToken().equalsName("rightBrace")) {
+        TripleExpression<T> temp = parse();
+        if (!getCurToken().equals(END)) {
+            if (getCurToken().equals(RIGHT_BRACE)) {
                 throw new ParsingException("No opening parenthesis: " + getSubstringWithErrorEnd());
             } else {
                 throw new ParsingException("Syntax error: " + getSubstringWithErrorEnd());

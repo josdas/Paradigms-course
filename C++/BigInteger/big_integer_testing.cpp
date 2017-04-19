@@ -588,9 +588,15 @@ namespace
     unsigned const number_of_iterations = 10;
     size_t const number_of_multipliers = 1000;
 
+	int rrand() {
+		return rand() ^ (rand() << 16);
+	}
+
+	int rRAND_MAX = RAND_MAX * RAND_MAX;
+
     int myrand()
     {
-        int val = rand() - RAND_MAX / 2;
+        int val = rrand() - rRAND_MAX / 2;
         if (val != 0)
             return val;
         else

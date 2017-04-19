@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="sum">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/artifacts/sum/SumTest.jar!/" />
+      <root url="jar://$PROJECT_DIR$/artifacts/sum/SumLongTest.jar!/" />
+      <root url="jar://$PROJECT_DIR$/artifacts/sum/SumLongHexTest.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
