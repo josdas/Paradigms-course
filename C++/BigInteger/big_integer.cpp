@@ -195,7 +195,7 @@ big_integer operator/(big_integer const& first, big_integer const& second) {
 		digit_type dig = get_next_digit(absFirst, absSecond);
 		big_integer tmp = dig * absSecond;
 		sign_double_digit_type carry = 0;
-		for (int j = i; j < absFirst.length(); j++) {
+		for (int j = i; j < static_cast<int>(absFirst.length()); j++) {
 			sign_double_digit_type res = carry + absFirst.data[j];
 			if (static_cast<size_t>(j - i) < tmp.length()) {
 				res -= tmp.data[j - i];
