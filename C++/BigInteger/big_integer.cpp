@@ -26,7 +26,8 @@ vector<double_digit_type> transformNumber(string const& str) {
 	else {
 		end = 0;
 	}
-	for (int i = static_cast<int>(str.size()) - 1; i >= end; i--) {
+	for (size_t ii = str.size(); ii > end; --ii) {
+		size_t i = ii - 1;
 		if (str[i] < '0' || str[i] > '9') {
 			throw runtime_error("incorrect_char");
 		}
@@ -40,7 +41,8 @@ digit_type getDigitFromVector(vector<double_digit_type>& num, double_digit_type 
 		throw runtime_error("base_equals_zero");
 	}
 	double_digit_type carry = 0;
-	for (int i = static_cast<int>(num.size()) - 1; i >= 0; i--) {
+	for (size_t ii = num.size(); ii != 0; --ii) {
+		size_t i = ii - 1;
 		double_digit_type cur = num[i] + carry * base_10;
 		num[i] = cur / base;
 		carry = cur % base;
@@ -153,12 +155,13 @@ digit_type get_next_digit(big_integer const& first, big_integer const& second) {
 	for (digit_type i = 0; i <= 1; i++) {
 		digit_type dig = 0;
 		if (absFirst >= absSecond) {
-			for (int j = pow_digit - 1; j >= 0; j--) {
+			for (digit_type jj = pow_digit; jj != 0; jj--) {
+				digit_type j = jj - 1;
 				digit_type nw = dig + (1ll << j);
 				if (nw * absSecond <= absFirst) {
 					dig = nw;
 				}
-			}///189  191 /  494
+			}
 			absFirst = absFirst - dig * absSecond;
 		}
 		if (dig > 0) {
@@ -186,8 +189,8 @@ big_integer operator/(big_integer const& first, big_integer const& second) {
 		}
 		return result;
 	}
-	int t = static_cast<int>(absFirst.length() - absSecond.length());
-	if (absFirst < absSecond << t * pow_digit) {
+	size_t t = absFirst.length() - absSecond.length();
+	if (absFirst < absSecond << static_cast<digit_type>(t) * pow_digit) {
 		t--;
 	}
 	vector<digit_type> temp;
@@ -198,7 +201,7 @@ big_integer operator/(big_integer const& first, big_integer const& second) {
 		sign_double_digit_type carry = 0;
 		for (size_t j = i; j < absFirst.length(); j++) {
 			sign_double_digit_type res = carry + absFirst.data[j];
-			if (static_cast<size_t>(j - i) < tmp.length()) {
+			if (j - i < tmp.length()) {
 				res -= tmp.data[j - i];
 			}
 			if (res < 0) {
@@ -251,7 +254,8 @@ bool operator<(big_integer const& first, big_integer const& second) {
 	if (first.length() != second.length()) {
 		return first.length() < second.length();
 	}
-	for (int i = static_cast<int>(first.length()) - 1; i >= 0; i--) {
+	for (size_t ii = first.length(); ii != 0; ii--) {
+		size_t i = ii - 1;
 		if (first.get_digit(i) != second.get_digit(i)) {
 			return first.get_digit(i) < second.get_digit(i);
 		}
@@ -309,7 +313,8 @@ big_integer div_big_small(big_integer const& first, E second) {
 	size_t size = first.length();
 	vector<digit_type> temp(size);
 	double_digit_type carry = 0;
-	for (int i = static_cast<int>(size) - 1; i >= 0; i--) {
+	for (size_t ii = size; ii != 0; ii--) {
+		size_t i = ii - 1;
 		double_digit_type cur = absFirst.get_digit(i) + carry * max_digit;
 		temp[i] = static_cast<digit_type>(cur / div);
 		carry = cur % div;
@@ -334,7 +339,8 @@ int operator%(big_integer const& first, int second) {
 	big_integer absFirst(first.absolute_value());
 	size_t size = first.length();
 	int carry = 0;
-	for (int i = static_cast<int>(size) - 1; i >= 0; i--) {
+	for (size_t ii = size; ii != 0; ii--) {
+		size_t i = ii - 1;
 		double_digit_type cur = absFirst.get_digit(i) + carry * max_digit;
 		carry = static_cast<int>(cur % second);
 	}
@@ -501,7 +507,7 @@ void big_integer::set_sign(bool s) {
 
 void big_integer::normalize() {
 	while (data.size() > 0
-		&& (get_sign() == -1 && data.back() == max_digit - 1
+			&& (get_sign() == -1 && data.back() == max_digit - 1
 			|| get_sign() == 1 && data.back() == 0)) {
 		data.pop_back();
 	}
