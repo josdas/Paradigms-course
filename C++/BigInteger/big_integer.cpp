@@ -191,11 +191,12 @@ big_integer operator/(big_integer const& first, big_integer const& second) {
 		t--;
 	}
 	vector<digit_type> temp;
-	for (int i = t; i >= 0; i--) {
+	for (size_t ii = t + 1; ii != 0; ii--) {
+		size_t i = ii - 1;
 		digit_type dig = get_next_digit(absFirst, absSecond);
 		big_integer tmp = dig * absSecond;
 		sign_double_digit_type carry = 0;
-		for (int j = i; j < static_cast<int>(absFirst.length()); j++) {
+		for (size_t j = i; j < absFirst.length(); j++) {
 			sign_double_digit_type res = carry + absFirst.data[j];
 			if (static_cast<size_t>(j - i) < tmp.length()) {
 				res -= tmp.data[j - i];
