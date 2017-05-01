@@ -17,7 +17,7 @@ bool is_neg(T x) {
 	return x < 0;
 }
 
-vector<double_digit_type> transformNumber(string const& str) {
+vector<double_digit_type> get_number_from_str_base10(string const& str) {
 	vector<double_digit_type> temp;
 	int end;
 	if (str[0] == '-') {
@@ -36,7 +36,7 @@ vector<double_digit_type> transformNumber(string const& str) {
 	return temp;
 }
 
-digit_type getDigitFromVector(vector<double_digit_type>& num, double_digit_type base) {
+digit_type get_next_digit_base10(vector<double_digit_type>& num, double_digit_type base) {
 	if (base == 0) {
 		throw runtime_error("base_equals_zero");
 	}
@@ -87,10 +87,10 @@ big_integer::big_integer(string const& str) {
 		throw runtime_error("empty_string");
 	}
 	bool isNeg = str[0] == '-';
-	vector<double_digit_type> temp = transformNumber(str);
+	vector<double_digit_type> temp = get_number_from_str_base10(str);
 	vector<digit_type> tempData;
 	while (temp.size() > 0) {
-		tempData.push_back(getDigitFromVector(temp, max_digit));
+		tempData.push_back(get_next_digit_base10(temp, max_digit));
 	}
 	sign = false;
 	data = tempData;
@@ -106,23 +106,23 @@ big_integer& big_integer::operator=(big_integer const& other) {
 
 big_integer operator*(big_integer const& first, big_integer const& second) {
 	bool sign = first.is_negative() ^ second.is_negative();
-	big_integer absFirst(first.absolute_value());
-	big_integer absSecond(second.absolute_value());
-	if (absFirst.length() > absSecond.length()) {
-		absFirst.swap(absSecond);
+	big_integer abs_first(first.absolute_value());
+	big_integer abs_second(second.absolute_value());
+	if (abs_first.length() > abs_second.length()) {
+		abs_first.swap(abs_second);
 	}
-	vector<digit_type> temp(absFirst.length() + absSecond.length() + 1);
-	for (size_t i = 0; i < absFirst.length(); i++) {
+	vector<digit_type> temp(abs_first.length() + abs_second.length() + 1);
+	for (size_t i = 0; i < abs_first.length(); i++) {
 		double_digit_type carry = 0;
-		for (size_t j = 0; j < absSecond.length(); j++) {
+		for (size_t j = 0; j < abs_second.length(); j++) {
 			size_t k = i + j;
-			double_digit_type tmp = static_cast<double_digit_type>(absFirst.get_digit(i)) * absSecond.get_digit(j);
+			double_digit_type tmp = static_cast<double_digit_type>(abs_first.get_digit(i)) * abs_second.get_digit(j);
 			double_digit_type e = temp[k] + (tmp & (max_digit - 1)) + carry;
 			temp[k] = e & max_digit - 1;
 			carry = (tmp >> pow_digit) + (e >> pow_digit);
 		}
 		if (carry != 0) {
-			temp[i + absSecond.length()] += static_cast<digit_type>(carry);
+			temp[i + abs_second.length()] += static_cast<digit_type>(carry);
 		}
 	}
 	big_integer result(temp, false);
@@ -146,28 +146,28 @@ digit_type get_next_digit(big_integer const& first, big_integer const& second) {
 	if (second == 0) {
 		throw runtime_error("divition_by_zero");
 	}
-	big_integer absFirst = get_higher_digits(first, 4);
-	big_integer absSecond = get_higher_digits(second, 3);
-	if (absFirst < absSecond) {
+	big_integer abs_first = get_higher_digits(first, 4);
+	big_integer abs_second = get_higher_digits(second, 3);
+	if (abs_first < abs_second) {
 		return 0;
 	}
-	absSecond = absSecond << pow_digit;
+	abs_second = abs_second << pow_digit;
 	for (digit_type i = 0; i <= 1; i++) {
 		digit_type dig = 0;
-		if (absFirst >= absSecond) {
+		if (abs_first >= abs_second) {
 			for (digit_type jj = pow_digit; jj != 0; jj--) {
 				digit_type j = jj - 1;
 				digit_type nw = dig + (1ll << j);
-				if (nw * absSecond <= absFirst) {
+				if (nw * abs_second <= abs_first) {
 					dig = nw;
 				}
 			}
-			absFirst = absFirst - dig * absSecond;
+			abs_first = abs_first - dig * abs_second;
 		}
 		if (dig > 0) {
 			return dig;
 		}
-		absSecond = absSecond >> pow_digit;
+		abs_second = abs_second >> pow_digit;
 	}
 	return 0;
 }
@@ -177,30 +177,30 @@ big_integer operator/(big_integer const& first, big_integer const& second) {
 		throw runtime_error("divition_by_zero");
 	}
 	bool sign = first.is_negative() ^ second.is_negative();
-	big_integer absFirst(first.absolute_value());
-	big_integer absSecond(second.absolute_value());
-	if (absFirst < absSecond) {
+	big_integer abs_first(first.absolute_value());
+	big_integer abs_second(second.absolute_value());
+	if (abs_first < abs_second) {
 		return big_integer(0);
 	}
-	if (absSecond.length() == 1) {
-		big_integer result = absFirst / absSecond.get_digit(0);
+	if (abs_second.length() == 1) {
+		big_integer result = abs_first / abs_second.get_digit(0);
 		if (sign) {
 			result = -result;
 		}
 		return result;
 	}
-	size_t t = absFirst.length() - absSecond.length();
-	if (absFirst < absSecond << static_cast<digit_type>(t) * pow_digit) {
+	size_t t = abs_first.length() - abs_second.length();
+	if (abs_first < abs_second << static_cast<digit_type>(t) * pow_digit) {
 		t--;
 	}
 	vector<digit_type> temp;
 	for (size_t ii = t + 1; ii != 0; ii--) {
 		size_t i = ii - 1;
-		digit_type dig = get_next_digit(absFirst, absSecond);
-		big_integer tmp = dig * absSecond;
+		digit_type dig = get_next_digit(abs_first, abs_second);
+		big_integer tmp = dig * abs_second;
 		sign_double_digit_type carry = 0;
-		for (size_t j = i; j < absFirst.length(); j++) {
-			sign_double_digit_type res = carry + absFirst.data[j];
+		for (size_t j = i; j < abs_first.length(); j++) {
+			sign_double_digit_type res = carry + abs_first.data[j];
 			if (j - i < tmp.length()) {
 				res -= tmp.data[j - i];
 			}
@@ -211,9 +211,9 @@ big_integer operator/(big_integer const& first, big_integer const& second) {
 			else {
 				carry = 0;
 			}
-			absFirst.data[j] = static_cast<digit_type>(res);
+			abs_first.data[j] = static_cast<digit_type>(res);
 		}
-		absFirst.normalize();
+		abs_first.normalize();
 		temp.push_back(dig);
 	}
 	for (size_t i = 0; i < temp.size() / 2; i++) {
@@ -279,13 +279,13 @@ bool operator>=(big_integer const& a, big_integer const& b) {
 
 string to_string(big_integer const& arg) {
 	string result;
-	big_integer absArg = arg.absolute_value();
+	big_integer abs_arg = arg.absolute_value();
 	bool isNeg = arg.is_negative();
-	while (absArg.length() > 0) {
+	while (abs_arg.length() > 0) {
 		const int block = 1000 * 1000 * 1000;
 		const int pow_10_block = 9;
-		int t = absArg % block;
-		absArg = absArg / block;
+		int t = abs_arg % block;
+		abs_arg = abs_arg / block;
 		for (int i = 0; i < pow_10_block; i++) {
 			result.push_back('0' + t % 10);
 			t /= 10;
@@ -309,7 +309,7 @@ big_integer div_big_small(big_integer const& first, E second) {
 	if (second == 0) {
 		throw runtime_error("divition_by_zero");
 	}
-	big_integer absFirst(first.absolute_value());
+	big_integer abs_first(first.absolute_value());
 	bool isNeg = first.is_negative() ^ is_neg(second);
 	double_digit_type div = abs(static_cast<sign_double_digit_type>(second));
 	size_t size = first.length();
@@ -317,7 +317,7 @@ big_integer div_big_small(big_integer const& first, E second) {
 	double_digit_type carry = 0;
 	for (size_t ii = size; ii != 0; ii--) {
 		size_t i = ii - 1;
-		double_digit_type cur = absFirst.get_digit(i) + carry * max_digit;
+		double_digit_type cur = abs_first.get_digit(i) + carry * max_digit;
 		temp[i] = static_cast<digit_type>(cur / div);
 		carry = cur % div;
 	}
@@ -338,12 +338,12 @@ int operator%(big_integer const& first, int second) {
 	if (second == 0) {
 		throw runtime_error("mod_by_zero");
 	}
-	big_integer absFirst(first.absolute_value());
+	big_integer abs_first(first.absolute_value());
 	size_t size = first.length();
 	int carry = 0;
 	for (size_t ii = size; ii != 0; ii--) {
 		size_t i = ii - 1;
-		double_digit_type cur = absFirst.get_digit(i) + carry * max_digit;
+		double_digit_type cur = abs_first.get_digit(i) + carry * max_digit;
 		carry = static_cast<int>(cur % second);
 	}
 	return carry;
