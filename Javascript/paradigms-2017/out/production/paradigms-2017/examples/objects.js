@@ -169,5 +169,5 @@ println();
 point = Object.create(PointWithPrototype.prototype);
 PointWithPrototype.call(point, 1, 2);
 dumpObject("PointWithPrototype created without new", point);
-2
+
 example("point.constructor", "Object's constructor");

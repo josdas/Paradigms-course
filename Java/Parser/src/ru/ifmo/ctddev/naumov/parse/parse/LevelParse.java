@@ -14,16 +14,16 @@ public class LevelParse<T> implements AbstractLevel<T> {
     public TripleExpression<T> calc(ExpressionParser<T> parser) throws ParsingException {
         parser.nextToken();
         TripleExpression<T> temp = null;
-        if (parser.getCurToken().equals(ExpressionParser.NUMBER)) {
-            temp = new Const(parser.getValue());
+        if (parser.getCurToken().equals(parser.NUMBER)) {
+            temp = new Const<T>(parser.getValue());
             parser.nextToken();
         } else if (parser.getCurToken().equalsName("variable")) {
-            temp = new Variable(parser.getCurToken().getStr());
+            temp = new Variable<T>(parser.getCurToken().getStr());
             parser.nextToken();
-        } else if (parser.getCurToken().equals(ExpressionParser.RIGHT_BRACE)) {
+        } else if (parser.getCurToken().equals(parser.RIGHT_BRACE)) {
             int left = parser.getIndex();
             temp = parser.parse();
-            if(!parser.getCurToken().equals(ExpressionParser.RIGHT_BRACE)) {
+            if(!parser.getCurToken().equals(parser.RIGHT_BRACE)) {
                 throw new ParsingException("The bracket is not closed at position: " + left
                         + "\n A closing brace is expected at position: "
                         + parser.getSubstringWithErrorEnd());

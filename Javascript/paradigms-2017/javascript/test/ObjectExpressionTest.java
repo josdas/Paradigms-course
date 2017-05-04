@@ -11,6 +11,7 @@ import static test.FunctionalExpressionTest.POLISH;
  * @author Georgiy Korneev (kgeorgiy@kgeorgiy.info)
  */
 public class ObjectExpressionTest extends BaseJavascriptTest<JSEngine> {
+    public static final int MIN = 2;
     public final double D = 1e-4;
 
     public static final Dialect PURE_OBJECT = dialect(
@@ -80,11 +81,11 @@ public class ObjectExpressionTest extends BaseJavascriptTest<JSEngine> {
 //                actual[variable] = length;
                 assertTrue("Simplified length too long: " + length + " instead of " + expected + result.context, length <= expected);
             }
-            for (int i = 1; i <= N; i += 1) {
+            for (int i = MIN; i <= N; i += 1) {
                 final double di = variable == 0 ? D : 0;
-                for (int j = 1; j <= N; j += 1) {
+                for (int j = MIN; j <= N; j += 1) {
                     final double dj = variable == 1 ? D : 0;
-                    for (int k = 1; k <= N; k += 1) {
+                    for (int k = MIN; k <= N; k += 1) {
                         op();
                         final double dk = variable == 2 ? D : 0;
                         final double expected = (

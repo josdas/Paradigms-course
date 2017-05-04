@@ -3,8 +3,34 @@
 
 [Условия домашних заданий](http://www.kgeorgiy.info/courses/paradigms/homeworks.html)
 
+Домашнее задание 11. Обработка ошибок на JavaScript
+---
+ * *Базовая*
+    * Код должен находиться в файле `objectExpression.js`.
+    * [Исходный код тестов](javascript/test/PrefixParserTest.java)
+        * Запускать c аргументом `easy` или `hard`
+
+
 Домашнее задание 10. Объектные выражения на JavaScript
 ---
+ * *Модификация 3*. Дополнительное реализовать поддержку:
+    * унарных операций:
+        * `Square` (`square`) — возведение в квадрат, `3 square` равно 9;
+        * `Sqrt` (`sqrt`) — извлечение квадратного корня из модуля аргумента, `-9 sqrt` равно 3;
+    * [Исходный код тестов](javascript/test/ObjectSquareTest.java)
+        * Запускать c аргументом `easy`, `hard` или `bonus`
+ * *Модификация 2*. Дополнительное реализовать поддержку:
+    * бинарных операций:
+        * `Power` (`pow`) — возведение в степень, `2 3 pow` равно 8;
+        * `Log` (`log`) — логарифм абсолютного значения аргумента 
+            по абсолютному значению основания `-2 -8 log` равно 3;
+    * [Исходный код тестов](javascript/test/ObjectPowLogTest.java)
+ * *Модификация*. Дополнительное реализовать поддержку:
+    * унарных операций:
+        * `Sinh` (`sinh`) — гиперболический синус, `3 sinh` немного больше 10;
+        * `Cosh` (`cosh`) — гиперболический косинус, `3 cosh` немного меньше 10;
+    * [Исходный код тестов](javascript/test/ObjectSinhCoshTest.java)
+        * Запускать c аргументом `easy`, `hard` или `bonus`
  * *Базовая*
     * Код должен находиться в файле `objectExpression.js`.
     * [Исходный код тестов](javascript/test/ObjectExpressionTest.java)
@@ -43,8 +69,10 @@
 ----
 * [Скрипт с примерами](javascript/script.js)
 * [Запуск в браузере](javascript/RunJS.html)
-* [Запуск из консоли](javascript/RunJS.java) (на Java)
-* [Запуск из консоли](javascript/RunJS.js) (на node.js)
+* Запуск из консоли
+    * [на Java](javascript/RunJS.java)
+    * [на jjs](javascript/RunJS.jjs.js)
+    * [на node.js](javascript/RunJS.node.js)
 
 Обратите внимание на реализацию функции `mCurry` в разделе про 
 [функции высшего порядка](javascript/examples/functions-hi.js).

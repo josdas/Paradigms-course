@@ -10,18 +10,20 @@ import ru.ifmo.ctddev.naumov.parse.token.BaseToken;
 import ru.ifmo.ctddev.naumov.parse.token.BinToken;
 import ru.ifmo.ctddev.naumov.parse.token.UnaryToken;
 
+import java.util.ArrayList;
+
 /**
  * Created by Stas on 28.03.2017.
  */
 public class ExpressionParser<T> implements Parser<T> {
-    public static final BaseToken VARIABLE_Z = new BaseToken("variable", "z");
-    public static final BaseToken VARIABLE_Y = new BaseToken("variable", "y");
-    public static final BaseToken VARIABLE_X = new BaseToken("variable", "x");
-    public static final BaseToken LEFT_BRACE = new BaseToken("leftBrace", "(");
-    public static final BaseToken RIGHT_BRACE = new BaseToken("rightBrace", ")");
-    public static final BaseToken END = new BaseToken("end");
-    public static final BaseToken START = new BaseToken("start");
-    public static final BaseToken NUMBER = new BaseToken("number");
+    public final BaseToken<T> VARIABLE_Z = new BaseToken<>("variable", "z");
+    public final BaseToken<T> VARIABLE_Y = new BaseToken<>("variable", "y");
+    public final BaseToken<T> VARIABLE_X = new BaseToken<>("variable", "x");
+    public final BaseToken<T> LEFT_BRACE = new BaseToken<>("leftBrace", "(");
+    public final BaseToken<T> RIGHT_BRACE = new BaseToken<>("rightBrace", ")");
+    public final BaseToken<T> END = new BaseToken<>("end");
+    public final BaseToken<T> START = new BaseToken<>("start");
+    public final BaseToken<T> NUMBER = new BaseToken<>("number");
 
     public final BinToken<T> MUL = new BinToken<T>("mul", "*", CheckedMultiply::new);
     public final BinToken<T> DIV = new BinToken<T>("div", "/", CheckedDivide::new);
@@ -34,31 +36,9 @@ public class ExpressionParser<T> implements Parser<T> {
     public final UnaryToken<T> SQRT = new UnaryToken<T>("sqrt", "sqrt", CheckedSqrt::new);
     public final UnaryToken<T> ABS = new UnaryToken<T>("abs", "abs", CheckedAbs::new);
 
-    private final BaseToken systemTokens[] = {
-            VARIABLE_X,
-            VARIABLE_Y,
-            VARIABLE_Z,
-            LEFT_BRACE,
-            RIGHT_BRACE,
-            END,
-            START,
-            NUMBER
-    };
-
-    private final BinToken binTokens[] = {
-            MUL,
-            DIV,
-            ADD,
-            SUB,
-            MAX,
-            MIN,
-    };
-
-    private final UnaryToken unaryTokens[] = {
-            NEGATIVE,
-            SQRT,
-            ABS,
-    };
+    private ArrayList<BaseToken<T>> systemTokens;
+    private ArrayList<BinToken<T>> binTokens;
+    private ArrayList<UnaryToken<T>> unaryTokens;
 
     private final AbstractLevel<T> mainLevel =
             new LevelBin<T>(
@@ -68,33 +48,53 @@ public class ExpressionParser<T> implements Parser<T> {
                                             new LevelParse<T>(),
                                             NEGATIVE, SQRT, ABS),
                                     MUL, DIV
-                                    ),
-                            SUB, ADD
                             ),
+                            SUB, ADD
+                    ),
                     MIN, MAX
-                    );
-
-    /*private final AbstractLevel<T> mainLevel =
-            new LevelBin<T>(new BinToken[]{MIN, MAX},
-            new LevelBin<T>(new BinToken[]{SUB, ADD},
-            new LevelBin<T>(new BinToken[]{MUL, DIV},
-            new LevelUno<T>(new UnaryToken[]{NEGATIVE, SQRT, ABS},
-            new LevelParse<T>()))));*/
+            );
 
     private String expression;
-    private int value;
+    private T value;
     private int cur;
     private int beginOfLastOperator;
-    private BaseToken curToken;
+    private BaseToken<T> curToken;
 
-    BaseToken getCurToken() {
+    public ExpressionParser() {
+        systemTokens = new ArrayList<BaseToken<T>>();
+        binTokens = new ArrayList<BinToken<T>>();
+        unaryTokens = new ArrayList<UnaryToken<T>>();
+
+        systemTokens.add(VARIABLE_X);
+        systemTokens.add(VARIABLE_Y);
+        systemTokens.add(VARIABLE_Z);
+        systemTokens.add(LEFT_BRACE);
+        systemTokens.add(RIGHT_BRACE);
+        systemTokens.add(END);
+        systemTokens.add(START);
+        systemTokens.add(NUMBER);
+
+        binTokens.add(MUL);
+        binTokens.add(DIV);
+        binTokens.add(ADD);
+        binTokens.add(SUB);
+        binTokens.add(MAX);
+        binTokens.add(MIN);
+
+        unaryTokens.add(NEGATIVE);
+        unaryTokens.add(SQRT);
+        unaryTokens.add(ABS);
+    }
+
+    BaseToken<T> getCurToken() {
         return curToken;
     }
 
     int getIndex() {
         return cur;
     }
-    int getValue() {
+
+    T getValue() {
         return value;
     }
 
@@ -108,25 +108,8 @@ public class ExpressionParser<T> implements Parser<T> {
         return !isUnary(token);
     }
 
-    private BaseToken findToken(String name, final BaseToken tokens[]) {
-        for (BaseToken token : tokens) {
-            if (token.equalsName(name)) {
-                return token;
-            }
-        }
-        return null;
-    }
-
-    private BaseToken findUnaryToken(String name) {
-        return findToken(name, unaryTokens);
-    }
-
-    private BaseToken findSystemToken(String name) {
-        return findToken(name, systemTokens);
-    }
-
-    private boolean setToken(String name, final BaseToken tokens[]) {
-        for (BaseToken token : tokens) {
+    private boolean setToken(String name, final ArrayList<BinToken<T>> tokens) {
+        for (BaseToken<T> token : tokens) {
             if (token.equalsStr(name)) {
                 curToken = token;
                 return true;
@@ -136,9 +119,10 @@ public class ExpressionParser<T> implements Parser<T> {
     }
 
     final char operators[] = {'+', '-', '/', '*', '(', ')'};
+
     private boolean isOperator(char c) {
-        for(char v : operators) {
-            if(v == c) {
+        for (char v : operators) {
+            if (v == c) {
                 return true;
             }
         }
@@ -165,9 +149,9 @@ public class ExpressionParser<T> implements Parser<T> {
                 cur++;
             } while (cur < expression.length() && Character.isDigit(expression.charAt(cur)));
             try {
-                value = Integer.parseInt(expression.substring(left, cur));
+                value = parseNumber(expression.substring(left, cur));
             } catch (NumberFormatException e) {
-                throw new OverflowException("Too big int begin at position: " + getSubstringWithError(left));
+                throw new OverflowException("Too big number begin at position: " + getSubstringWithError(left));
             }
             return;
         }
@@ -181,7 +165,7 @@ public class ExpressionParser<T> implements Parser<T> {
         if (Character.isLetter(chr)) {
             do {
                 char curChar = expression.charAt(cur);
-                if(!Character.isLetterOrDigit(curChar) && !isOperator(curChar)) {
+                if (!Character.isLetterOrDigit(curChar) && !isOperator(curChar)) {
                     throw new IllegalOperationException("Unknown character: " + getSubstringWithError(cur));
                 }
                 cur++;
@@ -189,7 +173,7 @@ public class ExpressionParser<T> implements Parser<T> {
             temp = expression.substring(beginOfLastOperator, cur);
         } else {
             temp = Character.toString(chr);
-            if(!Character.isLetterOrDigit(chr) && !isOperator(chr)) {
+            if (!Character.isLetterOrDigit(chr) && !isOperator(chr)) {
                 throw new IllegalOperationException("Unknown character: " + getSubstringWithError(cur));
             }
             cur++;
@@ -247,7 +231,6 @@ public class ExpressionParser<T> implements Parser<T> {
 
     public TripleExpression<T> parse(String expression) throws ParsingException {
         cur = 0;
-        value = 0;
         curToken = START;
         this.expression = expression;
         TripleExpression<T> temp = parse();

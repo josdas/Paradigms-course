@@ -3,7 +3,7 @@ package ru.ifmo.ctddev.naumov.parse.token;
 /**
  * Created by Stas on 31.03.2017.
  */
-public class BaseToken {
+public class BaseToken<T> {
     protected String name;
     protected String str;
 

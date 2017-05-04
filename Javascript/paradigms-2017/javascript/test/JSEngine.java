@@ -1,5 +1,6 @@
 package test;
 
+import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
@@ -27,6 +28,7 @@ public class JSEngine implements Engine {
             final ScriptEngineManager factory = new ScriptEngineManager();
             engine = factory.getEngineByName("JavaScript");
             engine.put("io", new IO(engine));
+            engine.put("global", engine.getContext().getBindings(ScriptContext.ENGINE_SCOPE));
             engine.eval("var println = function() { io.println(Array.prototype.map.call(arguments, String).join(' ')); };");
             engine.eval("var print   = function() { io.print  (Array.prototype.map.call(arguments, String).join(' ')); };");
             engine.eval("var include = function(file) { io.include(file); }");

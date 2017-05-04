@@ -7,7 +7,7 @@ import java.util.function.UnaryOperator;
 /**
  * Created by Stas on 31.03.2017.
  */
-public class UnaryToken<T> extends Token {
+public class UnaryToken<T> extends Token<T> {
     protected UnaryOperator<TripleExpression<T> > factory;
 
     public UnaryToken(String name, String str, UnaryOperator<TripleExpression<T> > factory) {

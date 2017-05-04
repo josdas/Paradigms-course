@@ -7,7 +7,7 @@ import java.util.function.BinaryOperator;
 /**
  * Created by Stas on 31.03.2017.
  */
-public class BinToken<T> extends Token {
+public class BinToken<T> extends Token<T> {
     private BinaryOperator<TripleExpression<T> > factory;
 
     public BinToken(String name, String str, BinaryOperator<TripleExpression<T> > factory) {

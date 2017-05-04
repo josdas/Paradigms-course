@@ -25,8 +25,8 @@ function cnst(x) {
     };
 }
 
+var variables = {"xyzuvw"};
 function variable(s) {
-    var variables = "xyzuvw";
     var e = variables.indexOf(s);
     return function() {
         return arguments[e];
@@ -86,13 +86,13 @@ var consts = {
     'e': Math.E
 };
 
-var pi = cnst(Math.PI);
-var e = cnst(Math.E);
-
-this['x'] = variable('x');
-this['y'] = variable('y');
-this['z'] = variable('z');
 function parse(str) {
+    for(c in variables) {
+        this[c] = variable(c);
+    }
+    for(c in consts) {
+        this[c] = cnst(c);
+    }
     var stack = [];
     str.split(' ')
        .filter(function(x) { return x.length > 0; })
