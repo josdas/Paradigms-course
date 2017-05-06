@@ -155,7 +155,7 @@ TEST(correctness, big_all_binary_2) {
 	int size = 1000 * 100;
 	Accomulator accomulator;
 	for (int64_t i = 0; i < 60; i++) {
-		accomulator.set(static_cast<machine_word>(i), static_cast<int64_t>(1) << std::min(i, 60ll));
+		accomulator.set(static_cast<machine_word>(i), static_cast<int64_t>(1) << std::min(i, static_cast<int64_t>(60)));
 	}
 	for (int i = 0; i < 50; i++) {
 		vector<machine_word> T(size);

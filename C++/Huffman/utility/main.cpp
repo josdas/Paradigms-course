@@ -7,6 +7,7 @@
 #include "my_ofstream.h"
 #include "my_ifstream.h"
 #include <ctime>
+#include <cstring>
 
 void add_word_to_vector(vector<char>& temp, vector<char> const& word) {
 	for (auto v : word) {

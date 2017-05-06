@@ -1,6 +1,8 @@
 #pragma once
 #include <utility>
 #include <cstdint>
+#include <cstdlib>
+
 typedef unsigned char machine_word;
 typedef std::pair<int64_t, size_t> node;
 
