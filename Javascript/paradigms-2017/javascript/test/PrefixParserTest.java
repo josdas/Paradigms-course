@@ -1,5 +1,7 @@
 package test;
 
+import expression.BaseTest;
+
 /**
  * @author Georgiy Korneev (kgeorgiy@kgeorgiy.info)
  */
@@ -53,11 +55,14 @@ public class PrefixParserTest extends ObjectExpressionTest {
     }
 
     public static void main(final String... args) {
-        test(PrefixParserTest.class, new FunctionalExpressionTest.ArithmeticTests(), args, ARITHMETIC_OBJECT);
+        test(PrefixParserTest.class, PrefixParserTest::new, new FunctionalExpressionTest.ArithmeticTests(), args, ARITHMETIC_OBJECT, "prefix");
     }
 
-    public static void test(final Class<?> type, final AbstractTests tests, final String[] args, final Dialect parsed) {
-        final int mode = mode(args, type, "easy", "hard");
-        new PrefixParserTest(mode, new Language(parsed, PREFIX, tests), "prefix").run();
+    public static <T extends BaseTest> void test(final Class<T> type, final Constructor<T> cons, final AbstractTests tests, final String[] args, final Dialect parsed, final String toString) {
+        cons.create(mode(args, type, "easy", "hard") + 1, new Language(parsed, PREFIX, tests), toString).run();
+    }
+
+    interface Constructor<T> {
+        T create(int mode, Language language, String toString);
     }
 }

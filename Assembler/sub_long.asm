@@ -336,7 +336,7 @@ write_char:
 exit:
                 mov             rax, 60
                 xor             rdi, rdi
-                syscall
+                syscallÿ
 ; print string to stdout
 ;    rsi -- string
 ;    rdx -- size

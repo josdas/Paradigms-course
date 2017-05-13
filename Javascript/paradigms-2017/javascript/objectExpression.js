@@ -75,24 +75,22 @@ Operation.prototype.diff = function (v) {
     ));
 };
 
-function newOperation(name, doEvaluate, doDiff, construct, arg) {
+function newOperation(name, doEvaluate, doDiff, construct) {
     this.getName = function() {
         return name;
     };
     this.doEvaluate = doEvaluate;
     this.doDiff = doDiff;
     this.constructor = construct;
-    Operation.apply(this, arg);
 }
 newOperation.prototype = Operation.prototype;
 
 function getNewOperation(name, doEvaluate, doDiff) {
     var temp = function(arr) {
-        var e = Object.create(this.prototype);
-        Operation.apply(e, arr);
-        return e;
+        var tmp = arguments;
+        Operation.apply(this, tmp);
     }
-    temp.prototype = new newOperation(name, doEvaluate, doDiff, temp);
+    temp.prototype = new newOperation(name, doEvaluate, doDiff);
     return temp;
 }
 
@@ -173,10 +171,9 @@ function doOperation(stack, operation) {
     for(var i = numberArguments - 1; i >= 0; i--) {
         temp[i] = stack.pop();
     }
-    //var obj = Object.create(operation.getOperation().prototype);
-    //operation.getOperation().apply(obj, temp);
-    //return obj;
-    return operation.getOperation()(temp);
+    var obj = Object.create(operation.getOperation().prototype);
+    operation.getOperation().apply(obj, temp);
+    return obj;
 }
 
 var OPERATION = {

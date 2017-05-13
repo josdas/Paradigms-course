@@ -14,6 +14,7 @@ public class ObjectExpressionTest extends BaseJavascriptTest<JSEngine> {
     public static final int MIN = 2;
     public final double D = 1e-4;
 
+
     public static final Dialect PURE_OBJECT = dialect(
             "new Variable('%s')",
             "new Const(%s)",
@@ -42,17 +43,20 @@ public class ObjectExpressionTest extends BaseJavascriptTest<JSEngine> {
     );
 
     protected final boolean testSimplify;
+    protected final boolean testDiff;
 
     protected ObjectExpressionTest(final int mode, final Language language) {
         super(new JSEngine("objectExpression.js", ".evaluate"), language, mode >= 1);
-        testSimplify = mode >= 2;
+        System.out.println(mode);
+        testDiff = mode >= 2;
+        testSimplify = mode >= 3;
     }
 
     @Override
     protected void test() {
         super.test();
 
-        if (testParsing) {
+        if (testDiff) {
             for (final Expr<TExpr> test : language.tests) {
                 testDiff(test, test.parsed, null);
                 testDiff(test, parse(test.unparsed), null);
@@ -125,7 +129,7 @@ public class ObjectExpressionTest extends BaseJavascriptTest<JSEngine> {
     }
 
     public static <T extends BaseTest> void test(final Class<T> type, final BiFunction<Integer, Language, T> cons, final AbstractTests tests, final String[] args, final Dialect parsed) {
-        final int mode = mode(args, type, "easy", "hard", "bonus");
+        final int mode = mode(args, type, "easy", "", "hard", "bonus");
         cons.apply(mode, new Language(parsed, POLISH, tests)).run();
     }
 }
