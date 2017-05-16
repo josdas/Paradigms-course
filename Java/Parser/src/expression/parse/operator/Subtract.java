@@ -3,7 +3,7 @@ package expression.parse.operator;
 import expression.exception.OverflowException;
 import expression.parse.AbstractBinaryOperator;
 import expression.parse.TripleExpression;
-import expression.parse.Operators.Operation;
+import expression.parse.operators.Operation;
 
 /**
  * Created by Stas on 28.03.2017.

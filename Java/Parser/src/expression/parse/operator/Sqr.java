@@ -4,7 +4,7 @@ import expression.exception.IllegalOperationException;
 import expression.exception.OverflowException;
 import expression.parse.AbstractUnaryOperator;
 import expression.parse.TripleExpression;
-import expression.parse.Operators.Operation;
+import expression.parse.operators.Operation;
 
 /**
  * Created by Stas on 28.03.2017.

@@ -1,4 +1,4 @@
-package expression.parse.Operators;
+package expression.parse.operators;
 
 import expression.exception.OverflowException;
 import expression.exception.ParsingException;
@@ -13,9 +13,9 @@ public interface Operation<T> {
 
     T mul(T a, T b) throws OverflowException;
 
-    T div(T a, T b) throws OverflowException;
+    T div(T a, T b) throws ParsingException;
 
-    T mod(T a, T b) throws OverflowException;
+    T mod(T a, T b) throws ParsingException;
 
     T sub(T a, T b) throws OverflowException;
 

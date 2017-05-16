@@ -20,7 +20,7 @@ public class LevelParse<T> implements AbstractLevel<T> {
         } else if (parser.getCurToken().equalsName("variable")) {
             temp = new Variable<T>(parser.getCurToken().getStr());
             parser.nextToken();
-        } else if (parser.getCurToken().equals(parser.RIGHT_BRACE)) {
+        } else if (parser.getCurToken().equals(parser.LEFT_BRACE)) {
             int left = parser.getIndex();
             temp = parser.parse();
             if(!parser.getCurToken().equals(parser.RIGHT_BRACE)) {

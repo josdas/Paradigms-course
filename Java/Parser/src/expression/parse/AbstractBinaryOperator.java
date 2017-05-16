@@ -1,9 +1,8 @@
 package expression.parse;
 
 
-import expression.exception.IllegalOperationException;
-import expression.exception.OverflowException;
-import expression.parse.Operators.Operation;
+import expression.exception.ParsingException;
+import expression.parse.operators.Operation;
 
 /**
  * Created by Stas on 28.03.2017.
@@ -18,9 +17,9 @@ public abstract class AbstractBinaryOperator<T> implements TripleExpression<T> {
         operation = op;
     }
 
-    protected abstract T operator(T a, T b) throws OverflowException, IllegalOperationException;
+    protected abstract T operator(T a, T b) throws ParsingException;
 
-    public T evaluate(T x, T y, T z) throws OverflowException, IllegalOperationException {
+    public T evaluate(T x, T y, T z) throws ParsingException {
         return operator(first.evaluate(x, y, z), second.evaluate(x, y, z));
     }
 }

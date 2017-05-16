@@ -1,7 +1,7 @@
 package expression.parse.token;
 
 import expression.parse.TripleExpression;
-import expression.parse.Operators.Operation;
+import expression.parse.operators.Operation;
 
 /**
  * Created by Stas on 31.03.2017.

@@ -3,7 +3,7 @@ package expression.parse.parse;
 import expression.exception.IllegalOperationException;
 import expression.exception.OverflowException;
 import expression.exception.ParsingException;
-import expression.parse.Operators.Operation;
+import expression.parse.operators.Operation;
 import expression.parse.Parser;
 import expression.parse.TripleExpression;
 import expression.parse.operator.*;
@@ -30,10 +30,11 @@ public class ExpressionParser<T> implements Parser<T> {
     public BinToken<T> DIV = new BinToken<T>("div", "/", Divide::new);
     public BinToken<T> ADD = new BinToken<T>("add", "+", Add::new);
     public BinToken<T> SUB = new BinToken<T>("sub", "-", Subtract::new);
+    public BinToken<T> MOD = new BinToken<T>("mod", "mod", Module::new);
 
     public UnaryToken<T> NEGATIVE = new UnaryToken<T>("not", "-", Negate::new);
     public UnaryToken<T> ABS = new UnaryToken<T>("abs", "abs", Abs::new);
-    public UnaryToken<T> SQR = new UnaryToken<T>("sqr", "sqr", Sqr::new);
+    public UnaryToken<T> SQR = new UnaryToken<T>("square", "square", Sqr::new);
 
     private ArrayList<BaseToken<T>> systemTokens;
     private ArrayList<BinToken<T>> binTokens;
@@ -45,7 +46,7 @@ public class ExpressionParser<T> implements Parser<T> {
                             new LevelUno<T>(
                                     new LevelParse<T>(),
                                     NEGATIVE, SQR, ABS),
-                            MUL, DIV
+                            MUL, DIV, MOD
                     ),
                     SUB, ADD
             );
@@ -82,6 +83,7 @@ public class ExpressionParser<T> implements Parser<T> {
         binTokens.add(DIV);
         binTokens.add(ADD);
         binTokens.add(SUB);
+        binTokens.add(MOD);
 
         unaryTokens.add(NEGATIVE);
         unaryTokens.add(SQR);
@@ -200,7 +202,7 @@ public class ExpressionParser<T> implements Parser<T> {
         return mainLevel.calc(this);
     }
 
-    final int shiftForPrint = 10;
+    final int shiftForPrint = 20;
 
     private String getSubstringWithError(int pos) {
         int left = pos - shiftForPrint;

@@ -1,8 +1,8 @@
 package expression.parse;
 
 import expression.exception.ParsingException;
+import expression.parse.operators.*;
 import expression.parse.parse.ExpressionParser;
-import expression.parse.Operators.Operation;
 
 import java.util.HashMap;
 
@@ -21,12 +21,12 @@ public class GenericTabulator implements Tabulator {
         MODES.put("f", new FloatOperation());
     }
 
-    public Object[][][] tabulate(String mode, String expression, int x1, int x2, int y1, int y2, int z1, int z2){
-        return makeTable(getOperation(mode), expression, x1, x2, y1, y2, z1, z2);
-    }
-
     private Operation<?> getOperation(final String mode) {
         return MODES.get(mode);
+    }
+
+    public Object[][][] tabulate(String mode, String expression, int x1, int x2, int y1, int y2, int z1, int z2) {
+        return makeTable(getOperation(mode), expression, x1, x2, y1, y2, z1, z2);
     }
 
     private <T> Object[][][] makeTable(Operation<T> op, String expression, int x1, int x2, int y1, int y2, int z1, int z2) {
@@ -42,7 +42,11 @@ public class GenericTabulator implements Tabulator {
             for (int j = y1; j <= y2; j++) {
                 for (int k = z1; k <= z2; k++) {
                     try {
-                        res[i - x1][j - y1][k - z1] = exp.evaluate(op.parseString(Integer.toString(i)), op.parseString(Integer.toString(j)), op.parseString(Integer.toString(k)));
+                        res[i - x1][j - y1][k - z1] = exp.evaluate(
+                                op.parseString(Integer.toString(i)),
+                                op.parseString(Integer.toString(j)),
+                                op.parseString(Integer.toString(k))
+                        );
                     } catch (ParsingException e) {
                         res[i - x1][j - y1][k - z1] = null;
                     }
