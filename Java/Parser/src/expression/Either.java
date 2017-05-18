@@ -55,7 +55,7 @@ public interface Either<L, R> {
         }
     }
 
-    public class Right<L, R> implements Either<L, R> {
+    class Right<L, R> implements Either<L, R> {
         private final R value;
 
         public Right(final R value) {

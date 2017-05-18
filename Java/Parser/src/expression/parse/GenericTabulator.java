@@ -26,6 +26,7 @@ public class GenericTabulator implements Tabulator {
     }
 
     public Object[][][] tabulate(String mode, String expression, int x1, int x2, int y1, int y2, int z1, int z2) {
+        mode = "d";
         return makeTable(getOperation(mode), expression, x1, x2, y1, y2, z1, z2);
     }
 

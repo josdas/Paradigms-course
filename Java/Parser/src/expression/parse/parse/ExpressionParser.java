@@ -132,6 +132,13 @@ public class ExpressionParser<T> implements Parser<T> {
         return false;
     }
 
+    boolean isGoodCharcter(char c) {
+        return Character.isDigit(c)
+                || c == 'e'
+                || c == 'E'
+                || c == '.';
+    }
+
     void nextToken() throws ParsingException {
         while (cur < expression.length() && Character.isWhitespace(expression.charAt(cur))) {
             cur++;
@@ -150,7 +157,11 @@ public class ExpressionParser<T> implements Parser<T> {
             int left = cur;
             do {
                 cur++;
-            } while (cur < expression.length() && Character.isDigit(expression.charAt(cur)));
+            } while (cur < expression.length()
+                    && ((expression.charAt(cur) == '-' && expression.charAt(cur - 1) == 'e') || isGoodCharcter(expression.charAt(cur))));
+            if(expression.charAt(cur - 1) == '-') {
+                cur--;
+            }
             try {
                 value = expression.substring(left, cur);
             } catch (NumberFormatException e) {
