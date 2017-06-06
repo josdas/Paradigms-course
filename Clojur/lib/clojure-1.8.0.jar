@@ -1,0 +1,170 @@
+<html><head>
+<title>ITMO wi-fi network</title>
+<meta http-equiv="Cache-control" content="no-cache"/>
+<meta http-equiv="Pragma" content="no-cache"/>
+<meta http-equiv="Content-Type" content="text/html; charset=koi8-r"/>
+<style>
+input, textarea, label { 
+   color: #0; 
+   font-size: large;
+   font-family: arial, helvetica, sans-serif;
+}
+
+body {
+   font-size: large;
+   width: 75%;
+   margin: 10px auto 0px auto;
+   text-align: center;
+   font-family: arial, helvetica, sans-serif;
+   background: #fff;
+   color: #000;
+}
+
+img {
+    max-width:65%;
+    height:auto;
+}
+
+table {
+   margin: auto;
+}
+
+h1 {
+   color: #0;
+   padding-top: 20px;
+   font-size: x-large;
+   line-height: 120%;
+}
+
+#ppp {
+   font-size: medium;
+   color: #0; 
+   font-family: arial, helvetica, sans-serif;
+}
+
+#pppleft {
+   font-size: medium;
+   color: #0; 
+   font-family: arial, helvetica, sans-serif;
+   text-align: left;
+}
+
+#pppl { 
+   color: #0; 
+   font-size: large;
+   font-family: arial, helvetica, sans-serif;
+   text-align: center;
+}
+
+#ppplleft { 
+   color: #0; 
+   font-size: large;
+   font-family: arial, helvetica, sans-serif;
+   text-align: left;
+}
+
+#ppplright { 
+   color: #0; 
+   font-size: large;
+   font-family: arial, helvetica, sans-serif;
+   text-align: right;
+}
+
+#pppxl { 
+   color: #0; 
+   font-size: x-large;
+   font-family: arial, helvetica, sans-serif;
+}
+
+#pppxxl { 
+   color: #0; 
+   font-size: xx-large;
+   font-family: arial, helvetica, sans-serif;
+}
+
+#butxl { 
+   font-size: x-large;
+   font-family: arial, helvetica, sans-serif;
+}
+
+.err{
+   font-size: medium;
+   font-weight: bold;
+   color: #0;
+   width: 70%;
+   margin: 0px auto 10px auto;
+   text-align: center;
+}
+</style>
+</head><body>
+<br><center><img src="itmo.jpg" border=0><p>
+<div id="pppl"><b>ITMO wi-fi network</b></div></center>
+<br>
+<div id="ppplleft">Для подключения к сети Вы должны ввести логин и пароль, выданные Вам 
+для работы в wi-fi сети "itmonet" в Вашем личном кабинете в <b>ИСУ ИТМО</b> 
+(см. "Настройки учетной записи и профиля" - "Wi&#8209;Fi")</div><br>
+<form name="form" method="post" action="login.chi"><INPUT TYPE="hidden" NAME="userurl" VALUE="http://repo1.maven.org/maven2/org/clojure/clojure/1.8.0/clojure-1.8.0.jar">
+<center>
+<table border=0>
+<tr>
+  <td align="right" width=30%><div id="ppplleft">Логин:</div></td>
+  <td align="left" width=70%><INPUT NAME="username" type="text" VALUE=""></td>
+</tr>
+<tr>
+  <td align="right" width=30%><div id="ppplleft">Пароль:</div></td>
+  <td align="left" width=70%><INPUT NAME="password" type="password" VALUE=""></td>
+</tr>
+</table>
+</center>
+
+
+<br>&nbsp;<br>
+
+<div id="ppplleft">
+Чтобы получить доступ в сеть Интернет, Вы должны согласиться
+соблюдать <a href="/www/terms.html">правила работы в нашей сети</a>.<br>
+Обязательно прочтите <a href="/www/terms.html">этот документ</a> и в случае если у Вас
+есть какие-либо проблемы со входом в сеть "itmonet".
+</div>
+<br>
+
+<center>
+<input type="submit" name="xbutton" id="butxl" value="OK, правила обязуюсь соблюдать"><p>
+</center>
+<br>
+
+<center>
+<hr width=90%>
+</center>
+<br>
+
+<div id="ppplleft">
+При необходимости Вы можете послать сообщение администрации сети через <a href="/www/contact.chi">эту web-форму</a>.
+</div>
+<br>&nbsp;<br>
+
+
+<div id="ppplleft">
+Если Вы - гость нашего Университета, и хотите получить доступ в Интернет
+через нашу сеть, то для этого Вы должны пройти <a href="/www/guestreg.chi">СМС-идентификацию</a>.
+</div>
+<br>&nbsp;<br></form>
+<p>
+<center>
+<hr width=90%>
+<br>
+<div id="ppp">
+Данный сервис wi&#8209;fi предоставляется Вам для удобства, бесплатно<br>
+и без каких-либо прямых или косвенных гарантий.
+</div>
+
+<p>
+<div id="ppp">
+Центр унифицированных коммуникаций Университета ИТМО<br>
+<A HREF="http://noc.ifmo.ru/ucc">http://noc.ifmo.ru/ucc</a>
+</div>
+</center>
+<br>&nbsp;<br>
+
+</body>
+</html>
